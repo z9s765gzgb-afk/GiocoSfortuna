@@ -308,7 +308,8 @@ const carte = [
 
 export default function App() {
   const [carteGiocatore, setCarteGiocatore] = useState([]);
-
+  const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
+ 
   function pescaCarte() {
     let carteScelte = [];
 
@@ -330,7 +331,7 @@ export default function App() {
     setCarteGiocatore(carteScelte);
   }
 
-  const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
+  
 
   function pescaCartaMisteriosa() {
    let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
@@ -349,20 +350,53 @@ export default function App() {
   }
 }
 
+ function controllaPosizione(index) {
+  let sfortunaMisteriosa = cartaMisteriosa.sfortuna;
+  let giusta = false;
+
+  if (index === 0 && sfortunaMisteriosa < carteGiocatore[0].sfortuna) {
+    giusta = true;
+  }
+
+  if (index === carteGiocatore.length && sfortunaMisteriosa > carteGiocatore[carteGiocatore.length - 1].sfortuna) {
+    giusta = true;
+  }
+
+  if (index > 0 && index < carteGiocatore.length) {
+    if (sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna && sfortunaMisteriosa < carteGiocatore[index].sfortuna) {
+      giusta = true;
+    }
+  }
+
+
+
+  if (giusta) {
+  alert("Risposta corretta! La carta è tua!");
+} else {
+  alert("Risposta sbagliata!");
+}
+}
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <Button title="Pesca 3 carte" onPress={pescaCarte} />
-          {carteGiocatore.map((carta) => (
+          {carteGiocatore.map((carta, index) => (
             <View key={carta.id} style={styles.carta}>
+               <Button title="Metti qui" onPress={() => controllaPosizione(index)} />
               <Image source={carta.immagine} style={styles.immagine} />
               <Text style={styles.titolo}>{carta.titolo}</Text>
               <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
             </View>
           ))}
-
-          <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
+          
+           <Button title="Metti qui" onPress={() => controllaPosizione(carteGiocatore.length)} />
+                
+           
+           <View style={{ marginTop: 20 }}>
+            <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
+           </View>
           {cartaMisteriosa && (
             <View style={styles.carta}>
               <Image source={cartaMisteriosa.immagine} style={styles.immagine} />
