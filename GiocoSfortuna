@@ -312,6 +312,7 @@ export default function App() {
   const [errori, setErrori] = useState(0);
   const [partitaFinita, setPartitaFinita] = useState(false);
   const [haVinto, setHaVinto] = useState(false);
+  const [carteUsate, setCarteUsate] = useState([]);
   
  
   function pescaCarte() {
@@ -326,12 +327,18 @@ export default function App() {
           giaPresente = true;
         }
       }
+      
+       if (carteUsate.includes(cartaCasuale.id)) {
+        giaPresente = true;
+       }
+
 
       if (!giaPresente) {
-        carteScelte[carteScelte.length] = cartaCasuale;
+        carteScelte.push(cartaCasuale);
       }
     }
 
+    carteScelte.sort((a, b) => a.sfortuna - b.sfortuna);
     setCarteGiocatore(carteScelte);
   }
 
@@ -347,8 +354,15 @@ export default function App() {
      }
   }
 
+  if (carteUsate.includes(cartaCasuale.id)) {
+    giaPresente = true;
+   }
+
   if (!giaPresente) {
     setCartaMisteriosa(cartaCasuale);
+
+    
+    setCarteUsate([...carteUsate, cartaCasuale.id]);
   } else {
     pescaCartaMisteriosa();
   }
@@ -385,6 +399,7 @@ function controllaPosizione(index) {
     );
 
     setCarteGiocatore(nuoveCarte);
+    setCarteUsate([...carteUsate, cartaMisteriosa.id]);
 
     if (nuoveCarte.length === 6) {
       setPartitaFinita(true);
@@ -420,9 +435,8 @@ function controllaPosizione(index) {
               <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
             </View>
           ))}
+          <Button title="Metti qui" onPress={() => controllaPosizione(carteGiocatore.length)} />     
           
-           <Button title="Metti qui" onPress={() => controllaPosizione(carteGiocatore.length)} />
-                
            
            <View style={{ marginTop: 20 }}>
             <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
