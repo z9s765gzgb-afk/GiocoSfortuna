@@ -309,6 +309,7 @@ const carte = [
 export default function App() {
   const [carteGiocatore, setCarteGiocatore] = useState([]);
   const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
+  const [errori, setErrori] = useState(0);
  
   function pescaCarte() {
     let carteScelte = [];
@@ -373,6 +374,8 @@ export default function App() {
   if (giusta) {
   alert("Risposta corretta! La carta è tua!");
 } else {
+  const nuoviErrori = errori + 1;
+  setErrori(nuoviErrori);
   alert("Risposta sbagliata!");
 }
 }
@@ -381,6 +384,7 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
+          <Text style={styles.info}>Errori: {errori}/3</Text>
           <Button title="Pesca 3 carte" onPress={pescaCarte} />
           {carteGiocatore.map((carta, index) => (
             <View key={carta.id} style={styles.carta}>
@@ -438,4 +442,11 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 4,
   },
+  info: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  textAlign: 'center',
+  marginBottom: 8,
+  color: '#e74c3c',
+},
 });
