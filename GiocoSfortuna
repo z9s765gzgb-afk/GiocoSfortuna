@@ -310,6 +310,9 @@ export default function App() {
   const [carteGiocatore, setCarteGiocatore] = useState([]);
   const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
   const [errori, setErrori] = useState(0);
+  const [partitaFinita, setPartitaFinita] = useState(false);
+  const [haVinto, setHaVinto] = useState(false);
+  
  
   function pescaCarte() {
     let carteScelte = [];
@@ -351,7 +354,7 @@ export default function App() {
   }
 }
 
- function controllaPosizione(index) {
+function controllaPosizione(index) {
   let sfortunaMisteriosa = cartaMisteriosa.sfortuna;
   let giusta = false;
 
@@ -359,26 +362,49 @@ export default function App() {
     giusta = true;
   }
 
-  if (index === carteGiocatore.length && sfortunaMisteriosa > carteGiocatore[carteGiocatore.length - 1].sfortuna) {
+  if (
+    index === carteGiocatore.length &&
+    sfortunaMisteriosa >
+      carteGiocatore[carteGiocatore.length - 1].sfortuna
+  ) {
     giusta = true;
   }
 
   if (index > 0 && index < carteGiocatore.length) {
-    if (sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna && sfortunaMisteriosa < carteGiocatore[index].sfortuna) {
+    if (
+      sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna &&
+      sfortunaMisteriosa < carteGiocatore[index].sfortuna
+    ) {
       giusta = true;
     }
   }
 
-
-
   if (giusta) {
-  alert("Risposta corretta! La carta è tua!");
-} else {
-  const nuoviErrori = errori + 1;
-  setErrori(nuoviErrori);
-  alert("Risposta sbagliata!");
+    const nuoveCarte = [...carteGiocatore, cartaMisteriosa].sort(
+      (a, b) => a.sfortuna - b.sfortuna
+    );
+
+    setCarteGiocatore(nuoveCarte);
+
+    if (nuoveCarte.length === 6) {
+      setPartitaFinita(true);
+      setHaVinto(true);
+    } else {
+      alert("Risposta corretta! La carta è tua!");
+    }
+  } else {
+    const nuoviErrori = errori + 1;
+    setErrori(nuoviErrori);
+
+    if (nuoviErrori === 3) {
+      setPartitaFinita(true);
+      setHaVinto(false);
+    } else {
+      alert("Risposta sbagliata!");
+    }
+  }
 }
-}
+
 
   return (
     <SafeAreaProvider>
@@ -407,6 +433,19 @@ export default function App() {
               <Text style={styles.titolo}>{cartaMisteriosa.titolo}</Text>
             </View>
           )}
+          
+           {partitaFinita && haVinto && (
+            <View style={styles.carta}>
+              <Text style={styles.titolo}>Hai vinto! Complimenti!</Text>
+            </View>
+          )}
+
+          {partitaFinita && !haVinto && (
+            <View style={styles.carta}>
+              <Text style={styles.titolo}>Hai perso! Troppi errori!</Text>
+            </View>
+          )}
+
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
