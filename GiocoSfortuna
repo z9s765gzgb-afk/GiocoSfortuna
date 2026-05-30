@@ -2,6 +2,10 @@ import { Text, View, Image, StyleSheet, Button, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
+/**
+ * Tutte le carte.
+ * @author Fabio Vernaci
+ */
 
 const carte = [
   {
@@ -305,16 +309,21 @@ const carte = [
     sfortuna: 100
   }
 ];
-
+/**
+ * App principale del gioco.
+ */
 export default function App() {
+
   const [carteGiocatore, setCarteGiocatore] = useState([]);
   const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
   const [errori, setErrori] = useState(0);
   const [partitaFinita, setPartitaFinita] = useState(false);
   const [haVinto, setHaVinto] = useState(false);
   const [carteUsate, setCarteUsate] = useState([]);
-  
- 
+
+  /**
+   * @description pesca 3 carte casuali non ripetute e non già usate.
+   */
   function pescaCarte() {
     let carteScelte = [];
 
@@ -327,11 +336,10 @@ export default function App() {
           giaPresente = true;
         }
       }
-      
-       if (carteUsate.includes(cartaCasuale.id)) {
-        giaPresente = true;
-       }
 
+      if (carteUsate.includes(cartaCasuale.id)) {
+        giaPresente = true;
+      }
 
       if (!giaPresente) {
         carteScelte.push(cartaCasuale);
@@ -342,113 +350,121 @@ export default function App() {
     setCarteGiocatore(carteScelte);
   }
 
-  
-
+  /**
+   *  @description pesca una carta misteriosa evitando duplicati.
+   */
   function pescaCartaMisteriosa() {
-   let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
-   let giaPresente = false;
+    let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
+    let giaPresente = false;
 
-   for (let i = 0; i < carteGiocatore.length; i++) {
-     if (carteGiocatore[i].id === cartaCasuale.id) {
-       giaPresente = true;
-     }
+    for (let i = 0; i < carteGiocatore.length; i++) {
+      if (carteGiocatore[i].id === cartaCasuale.id) {
+        giaPresente = true;
+      }
+    }
+
+    if (carteUsate.includes(cartaCasuale.id)) {
+      giaPresente = true;
+    }
+
+    if (!giaPresente) {
+      setCartaMisteriosa(cartaCasuale);
+      setCarteUsate([...carteUsate, cartaCasuale.id]);
+    } else {
+      pescaCartaMisteriosa();
+    }
   }
 
-  if (carteUsate.includes(cartaCasuale.id)) {
-    giaPresente = true;
-   }
+  /**
+   * Controlla se la carta misteriosa è nella posizione corretta.
+   * @param {number} index posizione scelta dal giocatore
+   */
+  function controllaPosizione(index) {
+    let sfortunaMisteriosa = cartaMisteriosa.sfortuna;
+    let giusta = false;
 
-  if (!giaPresente) {
-    setCartaMisteriosa(cartaCasuale);
+    if (index === 0 && sfortunaMisteriosa < carteGiocatore[0].sfortuna) {
+      giusta = true;
+    }
 
-    
-    setCarteUsate([...carteUsate, cartaCasuale.id]);
-  } else {
-    pescaCartaMisteriosa();
-  }
-}
-
-function controllaPosizione(index) {
-  let sfortunaMisteriosa = cartaMisteriosa.sfortuna;
-  let giusta = false;
-
-  if (index === 0 && sfortunaMisteriosa < carteGiocatore[0].sfortuna) {
-    giusta = true;
-  }
-
-  if (
-    index === carteGiocatore.length &&
-    sfortunaMisteriosa >
-      carteGiocatore[carteGiocatore.length - 1].sfortuna
-  ) {
-    giusta = true;
-  }
-
-  if (index > 0 && index < carteGiocatore.length) {
     if (
-      sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna &&
-      sfortunaMisteriosa < carteGiocatore[index].sfortuna
+      index === carteGiocatore.length &&
+      sfortunaMisteriosa > carteGiocatore[carteGiocatore.length - 1].sfortuna
     ) {
       giusta = true;
     }
-  }
 
-  if (giusta) {
-    const nuoveCarte = [...carteGiocatore, cartaMisteriosa].sort(
-      (a, b) => a.sfortuna - b.sfortuna
-    );
-
-    setCarteGiocatore(nuoveCarte);
-    setCarteUsate([...carteUsate, cartaMisteriosa.id]);
-
-    if (nuoveCarte.length === 6) {
-      setPartitaFinita(true);
-      setHaVinto(true);
-    } else {
-      alert("Risposta corretta! La carta è tua!");
+    if (index > 0 && index < carteGiocatore.length) {
+      if (
+        sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna &&
+        sfortunaMisteriosa < carteGiocatore[index].sfortuna
+      ) {
+        giusta = true;
+      }
     }
-  } else {
-    const nuoviErrori = errori + 1;
-    setErrori(nuoviErrori);
 
-    if (nuoviErrori === 3) {
-      setPartitaFinita(true);
-      setHaVinto(false);
+    if (giusta) {
+      const nuoveCarte = [...carteGiocatore, cartaMisteriosa].sort(
+        (a, b) => a.sfortuna - b.sfortuna
+      );
+
+      setCarteGiocatore(nuoveCarte);
+      setCarteUsate([...carteUsate, cartaMisteriosa.id]);
+
+      if (nuoveCarte.length === 6) {
+        setPartitaFinita(true);
+        setHaVinto(true);
+      } else {
+        alert("Risposta corretta! La carta è tua!");
+      }
     } else {
-      alert("Risposta sbagliata!");
+      const nuoviErrori = errori + 1;
+      setErrori(nuoviErrori);
+
+      if (nuoviErrori === 3) {
+        setPartitaFinita(true);
+        setHaVinto(false);
+      } else {
+        alert("Risposta sbagliata!");
+      }
     }
   }
-}
-
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
+
           <Text style={styles.info}>Errori: {errori}/3</Text>
+
           <Button title="Pesca 3 carte" onPress={pescaCarte} />
+
           {carteGiocatore.map((carta, index) => (
             <View key={carta.id} style={styles.carta}>
-               <Button title="Metti qui" onPress={() => controllaPosizione(index)} />
+              <Button title="Metti qui" onPress={() => controllaPosizione(index)} />
               <Image source={carta.immagine} style={styles.immagine} />
               <Text style={styles.titolo}>{carta.titolo}</Text>
               <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
             </View>
           ))}
-          <Button title="Metti qui" onPress={() => controllaPosizione(carteGiocatore.length)} />     
-          
-           
-           <View style={{ marginTop: 20 }}>
+
+          <Button
+            title="Metti qui"
+            onPress={() => controllaPosizione(carteGiocatore.length)}
+          />
+
+          <View style={{ marginTop: 20 }}>
             <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
-           </View>
+          </View>
+
           {cartaMisteriosa && (
             <View style={styles.carta}>
               <Image source={cartaMisteriosa.immagine} style={styles.immagine} />
               <Text style={styles.titolo}>{cartaMisteriosa.titolo}</Text>
             </View>
           )}
-          
-           {partitaFinita && haVinto && (
+
+          {partitaFinita && haVinto && (
             <View style={styles.carta}>
               <Text style={styles.titolo}>Hai vinto! Complimenti!</Text>
             </View>
@@ -466,6 +482,9 @@ function controllaPosizione(index) {
   );
 }
 
+/**
+ * Stili dell'app
+ */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -496,10 +515,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   info: {
-  fontSize: 16,
-  fontWeight: 'bold',
-  textAlign: 'center',
-  marginBottom: 8,
-  color: '#e74c3c',
-},
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+    color: '#e74c3c',
+  },
 });
