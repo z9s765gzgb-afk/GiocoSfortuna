@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, Button } from 'react-native';
+import { Text, View, Image, StyleSheet, Button, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
@@ -151,7 +151,7 @@ const carte = [
   {
     id: 25,
     titolo: "Prendi insufficienza nel progetto di gruppo",
-    immagine: { uri: "https://i.imgur.com/Fau1NmN.png"},
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png"},
     sfortuna: 50
   },
   {
@@ -330,18 +330,47 @@ export default function App() {
     setCarteGiocatore(carteScelte);
   }
 
+  const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
+
+  function pescaCartaMisteriosa() {
+   let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
+   let giaPresente = false;
+
+   for (let i = 0; i < carteGiocatore.length; i++) {
+     if (carteGiocatore[i].id === cartaCasuale.id) {
+       giaPresente = true;
+     }
+  }
+
+  if (!giaPresente) {
+    setCartaMisteriosa(cartaCasuale);
+  } else {
+    pescaCartaMisteriosa();
+  }
+}
+
   return (
     <SafeAreaProvider>
-    <SafeAreaView style={styles.container}>
-      <Button title="Pesca 3 carte" onPress={pescaCarte} />
-      {carteGiocatore.map((carta) => (
-        <View key={carta.id} style={styles.carta}>
-          <Image source={carta.immagine} style={styles.immagine} />
-          <Text style={styles.titolo}>{carta.titolo}</Text>
-          <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
-        </View>
-      ))}
-    </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          <Button title="Pesca 3 carte" onPress={pescaCarte} />
+          {carteGiocatore.map((carta) => (
+            <View key={carta.id} style={styles.carta}>
+              <Image source={carta.immagine} style={styles.immagine} />
+              <Text style={styles.titolo}>{carta.titolo}</Text>
+              <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
+            </View>
+          ))}
+
+          <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
+          {cartaMisteriosa && (
+            <View style={styles.carta}>
+              <Image source={cartaMisteriosa.immagine} style={styles.immagine} />
+              <Text style={styles.titolo}>{cartaMisteriosa.titolo}</Text>
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
