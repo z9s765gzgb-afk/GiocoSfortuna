@@ -1,0 +1,23 @@
+{
+  "name": "giocosfortuna",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+ "scripts": {
+  "doc": "jsdoc src/GiocoSfortuna.js -d ./out"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/z9s765gzgb-afk/GiocoSfortuna.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/z9s765gzgb-afk/GiocoSfortuna/issues"
+  },
+  "homepage": "https://github.com/z9s765gzgb-afk/GiocoSfortuna#readme",
+  "devDependencies": {
+    "jsdoc": "^4.0.5"
+  }
+}

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: GiocoSfortuna.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: GiocoSfortuna.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Text, View, Image, StyleSheet, Button, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+/**
+ * Tutte le carte.
+ * @author Fabio Vernaci
+ */
+
+const carte = [
+  {
+    id: 1,
+    titolo: "Dimentichi la penna durante il compito",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 2
+  },
+  {
+    id: 2,
+    titolo: "Interrogazione a sorpresa",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 4
+  },
+  {
+    id: 3,
+    titolo: "Arrivi tardi di 5 minuti",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 6
+  },
+  {
+    id: 4,
+    titolo: "Ti cade l'astuccio in classe",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 8
+  },
+  {
+    id: 5,
+    titolo: "Hai dimenticato il quaderno a casa",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 10
+  },
+  {
+    id: 6,
+    titolo: "Prendi una nota per aver parlato",
+    immagine: { uri: "https://i.imgur.com/Fau1NmN.png"},
+    sfortuna: 12
+  },
+  {
+    id: 7,
+    titolo: "Il compagno copia da te male",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 14
+  },
+  {
+    id: 8,
+    titolo: "Perdi l'autobus scolastico",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 16
+  },
+  {
+    id: 9,
+    titolo: "Ti si rompe la matita durante il test",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 18
+  },
+  {
+    id: 10,
+    titolo: "La prof ti cambia posto",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 20
+  },
+  {
+    id: 11,
+    titolo: "Hai studiato il capitolo sbagliato",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 22
+  },
+  {
+    id: 12,
+    titolo: "Il Wi-Fi della scuola non funziona",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 24
+  },
+  {
+    id: 13,
+    titolo: "Il professore perde il tuo compito",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 26
+  },
+  {
+    id: 14,
+    titolo: "Prendi 4 in matematica",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 28
+  },
+  {
+    id: 15,
+    titolo: "Ti dimentichi la presentazione ",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 30
+  },
+  {
+    id: 16,
+    titolo: "Il compito dura meno del previsto",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 32
+  },
+  {
+    id: 17,
+    titolo: "Il professore chiama proprio te",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 34
+  },
+  {
+    id: 18,
+    titolo: "Ti si scarica il tablet",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 36
+  },
+  {
+    id: 19,
+    titolo: "Compito a sorpresa il lunedì",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 38
+  },
+  {
+    id: 20,
+    titolo: "Perdi il libretto scolastico",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 40
+  },
+  {
+    id: 21,
+    titolo: "Il tuo progetto viene cancellato",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 42
+  },
+  {
+    id: 22,
+    titolo: "La stampante smette di funzionare",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 44
+  },
+  {
+    id: 23,
+    titolo: "Ti interrogano due volte nello stesso giorno",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 46
+  },
+  {
+    id: 24,
+    titolo: "Scopri di avere verifica oggi",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 48
+  },
+  {
+    id: 25,
+    titolo: "Prendi insufficienza nel progetto di gruppo",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png"},
+    sfortuna: 50
+  },
+  {
+    id: 26,
+    titolo: "Ti cade la merenda ",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 52
+  },
+  {
+    id: 27,
+    titolo: "Il prof assegna 50 esercizi",
+    immagine: { uri: "https://i.imgur.com/Fau1NmN.png"},
+    sfortuna: 54
+  },
+  {
+    id: 28,
+    titolo: "La tua relazione sparisce",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 56
+  },
+  {
+    id: 29,
+    titolo: "Hai febbre durante la settimana delle verifiche",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 58
+  },
+  {
+    id: 30,
+    titolo: "Il professore ti accusa ingiustamente",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 60
+  },
+  {
+    id: 31,
+    titolo: "Il gruppo ti esclude dal progetto",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 62
+  },
+  {
+    id: 32,
+    titolo: "Ti rompi gli occhiali a scuola",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 64
+  },
+  {
+    id: 33,
+    titolo: "Perdi gli appunti prima dell'esame",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 66
+  },
+  {
+    id: 34,
+    titolo: "Il prof annulla il bonus voto",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 68
+  },
+  {
+    id: 35,
+    titolo: "Compito di recupero il sabato",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 70
+  },
+  {
+    id: 36,
+    titolo: "Ti dimentichi di salvare il progetto",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 72
+  },
+  {
+    id: 37,
+    titolo: "Prendi 2 davanti a tutta la classe",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 74
+  },
+  {
+    id: 38,
+    titolo: "Ti sospendono ",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 76
+  },
+  {
+    id: 39,
+    titolo: "Il prof cambia data dell'esame all'ultimo",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 78
+  },
+  {
+    id: 40,
+    titolo: "Tutta la classe copia tranne te",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 80
+  },
+  {
+    id: 41,
+    titolo: "Perdi lo zaino sul pullman",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 82
+  },
+  {
+    id: 42,
+    titolo: "Il computer si blocca durante l'esame",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 84
+  },
+  {
+    id: 43,
+    titolo: "Ti bocciano all'esame orale",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 86
+  },
+  {
+    id: 44,
+    titolo: "Il professore perde il registro voti",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 88
+  },
+  {
+    id: 45,
+    titolo: "Devi ripetere l'anno",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 90
+  },
+  {
+    id: 46,
+    titolo: "Salti l'esame finale per malattia",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 92
+  },
+  {
+    id: 47,
+    titolo: "Ti cancellano il progetto finale",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 94
+  },
+  {
+    id: 48,
+    titolo: "Vieni accusato di aver copiato",
+    immagine: { uri: "https://i.imgur.com/ptPLD1T.png"},
+    sfortuna: 96
+  },
+  {
+    id: 49,
+    titolo: "Perdi l'anno per una assenza in più",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 98
+  },
+  {
+    id: 50,
+    titolo: "Il tuo esame finale viene annullato",
+    immagine: { uri: "https://i.imgur.com/p0BCb5F.png" },
+    sfortuna: 100
+  }
+];
+/**
+ * App principale del gioco.
+ */
+export default function App() {
+
+  const [carteGiocatore, setCarteGiocatore] = useState([]);
+  const [cartaMisteriosa, setCartaMisteriosa] = useState(null);
+  const [errori, setErrori] = useState(0);
+  const [partitaFinita, setPartitaFinita] = useState(false);
+  const [haVinto, setHaVinto] = useState(false);
+  const [carteUsate, setCarteUsate] = useState([]);
+
+  /**
+   * @description pesca 3 carte casuali non ripetute e non già usate.
+   */
+  function pescaCarte() {
+    let carteScelte = [];
+
+    while (carteScelte.length &lt; 3) {
+      let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
+      let giaPresente = false;
+
+      for (let i = 0; i &lt; carteScelte.length; i++) {
+        if (carteScelte[i].id === cartaCasuale.id) {
+          giaPresente = true;
+        }
+      }
+
+      if (carteUsate.includes(cartaCasuale.id)) {
+        giaPresente = true;
+      }
+
+      if (!giaPresente) {
+        carteScelte.push(cartaCasuale);
+      }
+    }
+
+    carteScelte.sort((a, b) => a.sfortuna - b.sfortuna);
+    setCarteGiocatore(carteScelte);
+  }
+
+  /**
+   *  @description pesca una carta misteriosa evitando duplicati.
+   */
+  function pescaCartaMisteriosa() {
+    let cartaCasuale = carte[Math.floor(Math.random() * carte.length)];
+    let giaPresente = false;
+
+    for (let i = 0; i &lt; carteGiocatore.length; i++) {
+      if (carteGiocatore[i].id === cartaCasuale.id) {
+        giaPresente = true;
+      }
+    }
+
+    if (carteUsate.includes(cartaCasuale.id)) {
+      giaPresente = true;
+    }
+
+    if (!giaPresente) {
+      setCartaMisteriosa(cartaCasuale);
+      setCarteUsate([...carteUsate, cartaCasuale.id]);
+    } else {
+      pescaCartaMisteriosa();
+    }
+  }
+
+  /**
+   * Controlla se la carta misteriosa è nella posizione corretta.
+   * @param {number} index posizione scelta dal giocatore
+   */
+  function controllaPosizione(index) {
+    let sfortunaMisteriosa = cartaMisteriosa.sfortuna;
+    let giusta = false;
+
+    if (index === 0 &amp;&amp; sfortunaMisteriosa &lt; carteGiocatore[0].sfortuna) {
+      giusta = true;
+    }
+
+    if (
+      index === carteGiocatore.length &amp;&amp;
+      sfortunaMisteriosa > carteGiocatore[carteGiocatore.length - 1].sfortuna
+    ) {
+      giusta = true;
+    }
+
+    if (index > 0 &amp;&amp; index &lt; carteGiocatore.length) {
+      if (
+        sfortunaMisteriosa > carteGiocatore[index - 1].sfortuna &amp;&amp;
+        sfortunaMisteriosa &lt; carteGiocatore[index].sfortuna
+      ) {
+        giusta = true;
+      }
+    }
+
+    if (giusta) {
+      const nuoveCarte = [...carteGiocatore, cartaMisteriosa].sort(
+        (a, b) => a.sfortuna - b.sfortuna
+      );
+
+      setCarteGiocatore(nuoveCarte);
+      setCarteUsate([...carteUsate, cartaMisteriosa.id]);
+
+      if (nuoveCarte.length === 6) {
+        setPartitaFinita(true);
+        setHaVinto(true);
+      } else {
+        alert("Risposta corretta! La carta è tua!");
+      }
+    } else {
+      const nuoviErrori = errori + 1;
+      setErrori(nuoviErrori);
+
+      if (nuoviErrori === 3) {
+        setPartitaFinita(true);
+        setHaVinto(false);
+      } else {
+        alert("Risposta sbagliata!");
+      }
+    }
+  }
+
+  return (
+    &lt;SafeAreaProvider>
+      &lt;SafeAreaView style={styles.container}>
+        &lt;ScrollView>
+
+          &lt;Text style={styles.info}>Errori: {errori}/3&lt;/Text>
+
+          &lt;Button title="Pesca 3 carte" onPress={pescaCarte} />
+
+          {carteGiocatore.map((carta, index) => (
+            &lt;View key={carta.id} style={styles.carta}>
+              &lt;Button title="Metti qui" onPress={() => controllaPosizione(index)} />
+              &lt;Image source={carta.immagine} style={styles.immagine} />
+              &lt;Text style={styles.titolo}>{carta.titolo}&lt;/Text>
+              &lt;Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}&lt;/Text>
+            &lt;/View>
+          ))}
+
+          &lt;Button
+            title="Metti qui"
+            onPress={() => controllaPosizione(carteGiocatore.length)}
+          />
+
+          &lt;View style={{ marginTop: 20 }}>
+            &lt;Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
+          &lt;/View>
+
+          {cartaMisteriosa &amp;&amp; (
+            &lt;View style={styles.carta}>
+              &lt;Image source={cartaMisteriosa.immagine} style={styles.immagine} />
+              &lt;Text style={styles.titolo}>{cartaMisteriosa.titolo}&lt;/Text>
+            &lt;/View>
+          )}
+
+          {partitaFinita &amp;&amp; haVinto &amp;&amp; (
+            &lt;View style={styles.carta}>
+              &lt;Text style={styles.titolo}>Hai vinto! Complimenti!&lt;/Text>
+            &lt;/View>
+          )}
+
+          {partitaFinita &amp;&amp; !haVinto &amp;&amp; (
+            &lt;View style={styles.carta}>
+              &lt;Text style={styles.titolo}>Hai perso! Troppi errori!&lt;/Text>
+            &lt;/View>
+          )}
+
+        &lt;/ScrollView>
+      &lt;/SafeAreaView>
+    &lt;/SafeAreaProvider>
+  );
+}
+
+/**
+ * Stili dell'app
+ */
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ecf0f1',
+    padding: 8,
+  },
+  carta: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  immagine: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+  },
+  titolo: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  sfortuna: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 4,
+  },
+  info: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+    color: '#e74c3c',
+  },
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#carte">carte</a></li><li><a href="global.html#styles">styles</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Wed Jun 03 2026 17:42:36 GMT+0200 (Ora legale dell’Europa centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
