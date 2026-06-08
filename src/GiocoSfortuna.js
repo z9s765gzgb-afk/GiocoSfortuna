@@ -430,28 +430,28 @@ export default function App() {
     }
   }
 
-  return (
+return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <ScrollView>
-
-          <Text style={styles.info}>Errori: {errori}/3</Text>
-
           <Button title="Pesca 3 carte" onPress={pescaCarte} />
 
           {carteGiocatore.map((carta, index) => (
             <View key={carta.id} style={styles.carta}>
-              <Button title="Metti qui" onPress={() => controllaPosizione(index)} />
               <Image source={carta.immagine} style={styles.immagine} />
               <Text style={styles.titolo}>{carta.titolo}</Text>
               <Text style={styles.sfortuna}>Sfortuna: {carta.sfortuna}</Text>
             </View>
           ))}
 
-          <Button
-            title="Metti qui"
-            onPress={() => controllaPosizione(carteGiocatore.length)}
-          />
+          {cartaMisteriosa && (
+            <View style={styles.riga}>
+              {carteGiocatore.map((carta, index) => (
+                <Button key={index} title={"Posizione " + (index + 1)} onPress={() => controllaPosizione(index)} />
+              ))}
+              <Button title={"Posizione " + (carteGiocatore.length + 1)} onPress={() => controllaPosizione(carteGiocatore.length)} />
+            </View>
+          )}
 
           <View style={{ marginTop: 20 }}>
             <Button title="Pesca carta misteriosa" onPress={pescaCartaMisteriosa} />
@@ -461,18 +461,6 @@ export default function App() {
             <View style={styles.carta}>
               <Image source={cartaMisteriosa.immagine} style={styles.immagine} />
               <Text style={styles.titolo}>{cartaMisteriosa.titolo}</Text>
-            </View>
-          )}
-
-          {partitaFinita && haVinto && (
-            <View style={styles.carta}>
-              <Text style={styles.titolo}>Hai vinto! Complimenti!</Text>
-            </View>
-          )}
-
-          {partitaFinita && !haVinto && (
-            <View style={styles.carta}>
-              <Text style={styles.titolo}>Hai perso! Troppi errori!</Text>
             </View>
           )}
 
@@ -521,4 +509,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: '#e74c3c',
   },
+  riga: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  marginTop: 12,
+ },
 });
